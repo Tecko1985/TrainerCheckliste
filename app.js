@@ -343,6 +343,8 @@ function setupDetail() {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".subnav button").forEach((b) => b.classList.toggle("active", b === btn));
       document.querySelectorAll(".subtab-section").forEach((s) => s.classList.toggle("active", s.id === "subtab-" + btn.dataset.subtab));
+      // Canvas im gerade sichtbar gewordenen Subtab neu vermessen (war bei display:none 0x0).
+      SIGNATURE_FIELDS.filter((f) => f.sectionKey === btn.dataset.subtab).forEach((f) => signaturePads[f.canvasId]?.resize());
     });
   });
 
