@@ -1,6 +1,17 @@
-const APP_VERSION = "1.3";
+const APP_VERSION = "1.4";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.4",
+    groups: [
+      {
+        title: "Trainer-Liste",
+        items: [
+          "Spaltenköpfe Name/Geburtsdatum/Eintritt/Austritt sind jetzt klickbar und sortieren die Liste (auf-/absteigend)."
+        ]
+      }
+    ]
+  },
   {
     version: "1.3",
     groups: [

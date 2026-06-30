@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>📋 TrainerCheckliste</title>
 <meta name="theme-color" content="#1a56a0" />
-<link rel="stylesheet" href="style.css?v=1.3" />
+<link rel="stylesheet" href="style.css?v=1.4" />
 </head>
 <body>
 
@@ -97,7 +97,11 @@
           <div class="empty-state" id="liste-empty" style="display:none;">Noch keine Trainer-Einträge angelegt.</div>
           <div class="empty-state" id="liste-empty-filtered" style="display:none;">Keine Einträge gefunden.</div>
           <div class="eintrag-row-header" id="liste-header" style="display:none;">
-            <span>Name</span><span>Geburtsdatum</span><span>Eintritt</span><span>Austritt</span><span></span>
+            <button type="button" class="liste-sort-btn" data-sort="name">Name<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="geburtsdatum">Geburtsdatum<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="zugang">Eintritt<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="abgang">Austritt<span class="sort-arrow"></span></button>
+            <span></span>
           </div>
           <div id="liste-rows"></div>
         </div>
@@ -225,10 +229,10 @@
   </main>
 </div>
 
-<script src="checklist-schema.js?v=1.3"></script>
-<script src="config.js?v=1.3"></script>
-<script src="db.js?v=1.3"></script>
-<script src="signature-pad.js?v=1.3"></script>
-<script src="app.js?v=1.3"></script>
+<script src="checklist-schema.js?v=1.4"></script>
+<script src="config.js?v=1.4"></script>
+<script src="db.js?v=1.4"></script>
+<script src="signature-pad.js?v=1.4"></script>
+<script src="app.js?v=1.4"></script>
 </body>
 </html>

@@ -5,6 +5,8 @@ let currentEintragId = null;
 let listeSearchQuery = "";
 let listeFilterZugang = "";
 let listeFilterAbgang = "";
+let listeSortColumn = "name";
+let listeSortDirection = "asc";
 let signaturePads = {};
 
 const SIGNATURE_FIELDS = [
@@ -95,6 +97,7 @@ function sectionStatus(section) {
 }
 
 const STATUS_LABEL = { offen: "Offen", arbeit: "In Arbeit", fertig: "Abgeschlossen" };
+const STATUS_RANK = { offen: 0, arbeit: 1, fertig: 2 };
 
 // ---------- Persistenz ----------
 
@@ -274,6 +277,18 @@ function setupListe() {
     listeFilterAbgang = e.target.value;
     renderListe();
   });
+  document.querySelectorAll(".liste-sort-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const column = btn.dataset.sort;
+      if (listeSortColumn === column) {
+        listeSortDirection = listeSortDirection === "asc" ? "desc" : "asc";
+      } else {
+        listeSortColumn = column;
+        listeSortDirection = "asc";
+      }
+      renderListe();
+    });
+  });
 }
 
 function createNewEintrag() {
@@ -300,6 +315,22 @@ function formatDate(iso) {
   return `${d}.${m}.${y}`;
 }
 
+function compareEntries(a, b, column) {
+  if (column === "geburtsdatum") {
+    return (a.geburtsdatum || "").localeCompare(b.geburtsdatum || "");
+  }
+  if (column === "zugang" || column === "abgang") {
+    const sa = sectionStatus(a[column]);
+    const sb = sectionStatus(b[column]);
+    const rankDiff = STATUS_RANK[sa] - STATUS_RANK[sb];
+    if (rankDiff !== 0) return rankDiff;
+    const da = a[column].datum || a[column].headerDatum || "";
+    const db = b[column].datum || b[column].headerDatum || "";
+    return da.localeCompare(db);
+  }
+  return `${a.name} ${a.vorname}`.localeCompare(`${b.name} ${b.vorname}`, "de");
+}
+
 function renderListe() {
   const rows = appData.trainerEintraege
     .filter((e) => {
@@ -311,7 +342,13 @@ function renderListe() {
       if (listeFilterAbgang && sectionStatus(e.abgang) !== listeFilterAbgang) return false;
       return true;
     })
-    .sort((a, b) => `${a.name} ${a.vorname}`.localeCompare(`${b.name} ${b.vorname}`, "de"));
+    .sort((a, b) => compareEntries(a, b, listeSortColumn) * (listeSortDirection === "asc" ? 1 : -1));
+
+  document.querySelectorAll(".liste-sort-btn").forEach((btn) => {
+    const isActive = btn.dataset.sort === listeSortColumn;
+    btn.classList.toggle("active", isActive);
+    btn.querySelector(".sort-arrow").textContent = isActive ? (listeSortDirection === "asc" ? "▲" : "▼") : "";
+  });
 
   const hasEintraege = appData.trainerEintraege.length > 0;
   document.getElementById("liste-empty").style.display = hasEintraege ? "none" : "block";
