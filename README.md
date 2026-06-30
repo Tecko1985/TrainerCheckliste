@@ -1,47 +1,79 @@
 # TrainerCheckliste
 
-Digitalisierte Version der Checkliste "Trainerzu-/-abgang" (Word-Vorlage im
-Nachwuchsbereich) als eigenständige, clientseitige Web-App ohne Build-Step
-(Vanilla HTML/CSS/JS), nach dem Vorbild von [Materialliste](../Materialliste).
+Digitalisierte Version der Checkliste „Trainerzu-/-abgang" als eigenständige,
+clientseitige Web-App ohne Build-Step (Vanilla HTML/CSS/JS).
 
-Trainer-Einträge inkl. Stammdaten und digitaler Unterschriften werden
-ausschließlich über WebDAV in einer Nextcloud gespeichert (kein lokaler
-Datei-Picker, kein Offline-Speicher). Beim Verbinden wird ein Nextcloud
-**App-Passwort** benötigt (Nextcloud → Einstellungen → Sicherheit → Neues
-App-Passwort), nicht das normale Account-Passwort.
+**Live:** https://tecko1985.github.io/TrainerCheckliste/
+
+---
+
+## Funktionen
+
+### Trainer-Liste
+- Übersicht aller Einträge mit Name, Geburtsdatum und Status-Badges für Eintritt und
+  Austritt (Offen / In Arbeit / Abgeschlossen) inkl. Datum unter dem Badge
+- Suche nach Name, kombinierbar mit Statusfiltern für Eintritt und Austritt
+- Sortierbare Spalten: Name, Geburtsdatum, Eintritt, Austritt (Klick = auf-/absteigend)
+- Neuen Eintrag anlegen, Eintrag löschen (mit Sicherheitsabfrage)
+
+### Stammdaten
+- Name, Vorname, Geburtsdatum, Anschrift, Telefon, E-Mail
+- Kopf-Checkbox und Datum für Trainerzugang/-abgang
+
+### Checklisten Zugang & Abgang
+- Beide Checklisten 1:1 aus der Papier-Vorlage digitalisiert, inkl. aller Unterpunkte
+- Jeder Punkt einzeln abhakbar; beim Punkt **Z-Schlüssel** erscheint automatisch ein
+  Eingabefeld für die Schlüsselnummer
+- Bemerkungsfeld, Abschluss-Status („konnte nicht abgeschlossen werden, weil…" oder
+  „abgeschlossen"), Ort und Datum
+
+### Unterschriften
+- Je eine digitale Unterschrift von Trainer/Betreuer und Geschäftsstelle pro Abschnitt
+  (Maus, Touch oder Stift/Pen)
+- Löschen-Button pro Unterschriftsfeld
+
+### Speicherung
+- Ausschließlich über **Nextcloud-WebDAV** — keine Daten auf fremden Servern
+- Automatisches Speichern bei jeder Änderung (300 ms Debounce)
+- Zugangsdaten werden im Browser (IndexedDB) gemerkt, sodass beim nächsten Öffnen
+  automatisch verbunden wird
+- Benötigt ein **App-Passwort** (Nextcloud → Einstellungen → Sicherheit →
+  Neues App-Passwort), nicht das normale Account-Passwort
+
+---
 
 ## Lokal starten
 
-`fetch()`-Aufrufe von einem `file://`-Origin verhalten sich inkonsistent
-(CORS). Die App daher über einen lokalen Static-Server öffnen, z. B.:
+`fetch()`-Aufrufe von einem `file://`-Origin verhalten sich inkonsistent (CORS).
+Die App daher über einen lokalen Static-Server öffnen:
 
 ```
 npx serve .
 ```
 
-## Bekannte Einschränkung: CORS
+---
 
-Bestätigt am 2026-06-30: Zugangsdaten, Pfad und Schreibrechte funktionieren
-(per `curl` verifiziert, Testdatei erfolgreich angelegt), aber der direkte
-WebDAV-Aufruf aus dem Browser schlägt mit `TypeError: Failed to fetch` fehl –
-der Nextcloud-Server sendet keine `Access-Control-Allow-Origin`-Header.
+## CORS-Proxy
 
-**Lösung: `cors-proxy-worker.js` deployen.** Dieses Projekt hat einen eigenen
-Cloudflare-Worker-Proxy (im Unterschied zu Materialliste mit mehreren
-erlaubten Origins gleichzeitig, siehe `ALLOWED_ORIGINS` im Worker-Code):
+Nextcloud sendet standardmäßig keine `Access-Control-Allow-Origin`-Header, wodurch
+direkte WebDAV-Aufrufe aus dem Browser blockiert werden.
 
-1. dash.cloudflare.com → Workers & Pages → Create → "Hello World"
-2. Code aus `cors-proxy-worker.js` einfügen, Deploy
+**Lösung:** `cors-proxy-worker.js` als Cloudflare Worker deployen:
+
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → Workers & Pages → Create → „Hello World"
+2. Code aus `cors-proxy-worker.js` einfügen und deployen
 3. Die resultierende `*.workers.dev`-URL im Feld **CORS-Proxy-URL** des
-   Verbindungsformulars eintragen (`index.html` / Settings)
-4. Bei neuen Origins (z.B. spätere GitHub-Pages-URL) `ALLOWED_ORIGINS` im
+   Verbindungsformulars eintragen
+4. Bei neuen Origins (z. B. ein weiterer Dev-Server) `ALLOWED_ORIGINS` im
    Worker-Code ergänzen und neu deployen
 
-Ohne deployten Proxy funktioniert die App-Verbindung zur Nextcloud **nicht**,
+Ohne deployten Proxy funktioniert die Verbindung zur Nextcloud **nicht**,
 unabhängig von korrekten Zugangsdaten.
+
+---
 
 ## Datenmodell
 
-Eine JSON-Datei `{ trainerEintraege: [...] }` auf der Nextcloud. Struktur und
-Feldnamen siehe `app.js` (`emptyTrainerEintrag`, `emptyChecklistSection`) und
-`checklist-schema.js` (`ZUGANG_SCHEMA`, `ABGANG_SCHEMA`).
+Eine JSON-Datei `{ trainerEintraege: [...] }` auf der Nextcloud.
+Struktur und Feldnamen: `app.js` (`emptyTrainerEintrag`, `emptyChecklistSection`)
+und `checklist-schema.js` (`ZUGANG_SCHEMA`, `ABGANG_SCHEMA`).
