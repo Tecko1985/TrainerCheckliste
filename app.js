@@ -3,6 +3,8 @@ let webdavConfig = null;
 let saveTimer = null;
 let currentEintragId = null;
 let listeSearchQuery = "";
+let listeFilterZugang = "";
+let listeFilterAbgang = "";
 let signaturePads = {};
 
 const SIGNATURE_FIELDS = [
@@ -262,6 +264,14 @@ function setupListe() {
     listeSearchQuery = e.target.value.trim().toLowerCase();
     renderListe();
   });
+  document.getElementById("liste-filter-zugang").addEventListener("change", (e) => {
+    listeFilterZugang = e.target.value;
+    renderListe();
+  });
+  document.getElementById("liste-filter-abgang").addEventListener("change", (e) => {
+    listeFilterAbgang = e.target.value;
+    renderListe();
+  });
 }
 
 function createNewEintrag() {
@@ -291,13 +301,19 @@ function formatDate(iso) {
 function renderListe() {
   const rows = appData.trainerEintraege
     .filter((e) => {
-      if (!listeSearchQuery) return true;
-      const haystack = `${e.vorname} ${e.name}`.toLowerCase();
-      return haystack.includes(listeSearchQuery);
+      if (listeSearchQuery) {
+        const haystack = `${e.vorname} ${e.name}`.toLowerCase();
+        if (!haystack.includes(listeSearchQuery)) return false;
+      }
+      if (listeFilterZugang && sectionStatus(e.zugang) !== listeFilterZugang) return false;
+      if (listeFilterAbgang && sectionStatus(e.abgang) !== listeFilterAbgang) return false;
+      return true;
     })
     .sort((a, b) => `${a.name} ${a.vorname}`.localeCompare(`${b.name} ${b.vorname}`, "de"));
 
-  document.getElementById("liste-empty").style.display = appData.trainerEintraege.length === 0 ? "block" : "none";
+  const hasEintraege = appData.trainerEintraege.length > 0;
+  document.getElementById("liste-empty").style.display = hasEintraege ? "none" : "block";
+  document.getElementById("liste-empty-filtered").style.display = hasEintraege && rows.length === 0 ? "block" : "none";
   document.getElementById("liste-header").style.display = rows.length > 0 ? "grid" : "none";
 
   document.getElementById("liste-rows").innerHTML = rows.map((e) => {
