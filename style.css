@@ -158,6 +158,9 @@ button.btn:disabled { opacity: 0.6; cursor: default; }
 .eintrag-row:hover { background: var(--gray); }
 .eintrag-row .eintrag-name { font-weight: 700; }
 .eintrag-row-header {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 0.9fr 0.9fr auto;
+  gap: 10px;
   font-size: 12px;
   font-weight: 600;
   color: var(--muted);
@@ -167,6 +170,9 @@ button.btn:disabled { opacity: 0.6; cursor: default; }
 @media (max-width: 760px) {
   .eintrag-row, .eintrag-row-header { grid-template-columns: 1fr 1fr; }
 }
+
+.eintrag-status-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.eintrag-status-date { font-size: 11px; color: var(--muted); }
 
 .badge {
   display: inline-flex;

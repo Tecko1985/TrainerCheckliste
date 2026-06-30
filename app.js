@@ -281,6 +281,13 @@ function deleteEintrag(id) {
   renderListe();
 }
 
+function formatDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  if (!y || !m || !d) return iso;
+  return `${d}.${m}.${y}`;
+}
+
 function renderListe() {
   const rows = appData.trainerEintraege
     .filter((e) => {
@@ -296,12 +303,20 @@ function renderListe() {
   document.getElementById("liste-rows").innerHTML = rows.map((e) => {
     const zugangStatus = sectionStatus(e.zugang);
     const abgangStatus = sectionStatus(e.abgang);
+    const zugangDatum = formatDate(e.zugang.datum || e.zugang.headerDatum);
+    const abgangDatum = formatDate(e.abgang.datum || e.abgang.headerDatum);
     return `
       <div class="eintrag-row" data-id="${escapeHtml(e.id)}">
         <span class="eintrag-name">${escapeHtml(`${e.vorname} ${e.name}`.trim()) || "(ohne Namen)"}</span>
-        <span>${escapeHtml(e.geburtsdatum)}</span>
-        <span class="badge status-${zugangStatus === "fertig" ? "fertig" : zugangStatus === "arbeit" ? "arbeit" : "offen"}">${STATUS_LABEL[zugangStatus]}</span>
-        <span class="badge status-${abgangStatus === "fertig" ? "fertig" : abgangStatus === "arbeit" ? "arbeit" : "offen"}">${STATUS_LABEL[abgangStatus]}</span>
+        <span>${escapeHtml(formatDate(e.geburtsdatum))}</span>
+        <span class="eintrag-status-cell">
+          <span class="badge status-${zugangStatus === "fertig" ? "fertig" : zugangStatus === "arbeit" ? "arbeit" : "offen"}">${STATUS_LABEL[zugangStatus]}</span>
+          ${zugangDatum ? `<span class="eintrag-status-date">${escapeHtml(zugangDatum)}</span>` : ""}
+        </span>
+        <span class="eintrag-status-cell">
+          <span class="badge status-${abgangStatus === "fertig" ? "fertig" : abgangStatus === "arbeit" ? "arbeit" : "offen"}">${STATUS_LABEL[abgangStatus]}</span>
+          ${abgangDatum ? `<span class="eintrag-status-date">${escapeHtml(abgangDatum)}</span>` : ""}
+        </span>
         <button class="btn danger small" type="button" data-delete-id="${escapeHtml(e.id)}">Löschen</button>
       </div>
     `;
