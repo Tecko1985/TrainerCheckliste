@@ -1,6 +1,17 @@
-const APP_VERSION = "1.4";
+const APP_VERSION = "1.5";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.5",
+    groups: [
+      {
+        title: "Unterschriften",
+        items: [
+          "Gespeicherte Unterschriften im Abgang-Tab werden beim Öffnen eines Eintrags wieder korrekt angezeigt (zuvor blieb das Feld leer, bis man neu zeichnete)."
+        ]
+      }
+    ]
+  },
   {
     version: "1.4",
     groups: [
