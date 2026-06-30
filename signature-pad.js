@@ -13,6 +13,7 @@ function createSignaturePad(canvas, onChange) {
   let hasInk = false;
   let last = null;
   let savedDataUrl = "";
+  let locked = false;
 
   function applyStyle() {
     const ratio = window.devicePixelRatio || 1;
@@ -49,6 +50,7 @@ function createSignaturePad(canvas, onChange) {
   }
 
   function start(e) {
+    if (locked) return;
     e.preventDefault();
     drawing = true;
     last = pointFromEvent(e);
@@ -110,6 +112,9 @@ function createSignaturePad(canvas, onChange) {
     },
     toDataURL() {
       return hasInk ? canvas.toDataURL("image/png") : "";
+    },
+    setLocked(val) {
+      locked = val;
     },
     loadDataURL(dataUrl) {
       // Nur echte Bild-DataURLs zeichnen. Eine manipulierte JSON-Datei könnte sonst

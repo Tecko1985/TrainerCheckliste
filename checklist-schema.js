@@ -13,7 +13,7 @@ const ZUGANG_SCHEMA = [
     id: "zugang-5", label: "Schlüsselübergabe", verantwortlich: "Geschäftsstellenleiter",
     subItems: [
       { id: "zugang-5-1", label: "Z-Schlüssel", textInput: true, textInputPlaceholder: "Schlüsselnummer" },
-      { id: "zugang-5-2", label: "Schrankschlüssel Trainingsmaterialien" },
+      { id: "zugang-5-2", label: "Schrankschlüssel Trainingsmaterialien", textInput: true, textInputPlaceholder: "Schlüsselnummer" },
       { id: "zugang-5-3", label: "Schlüssel zum Tablet Stadion Schiedsrichterkabine ____" },
       { id: "zugang-5-4", label: "Schlüssel zum Tablet Stelzenberg in Schiedsrichterkabine" },
       { id: "zugang-5-5", label: "100 EUR Pfand hinterlegen" }
@@ -95,7 +95,7 @@ const ABGANG_SCHEMA = [
     id: "abgang-4", label: "Schlüsselabgabe", verantwortlich: "Geschäftsstellenleiter",
     subItems: [
       { id: "abgang-4-1", label: "Z-Schlüssel", textInput: true, textInputPlaceholder: "Schlüsselnummer" },
-      { id: "abgang-4-2", label: "Schrankschlüssel Trainingsmaterialien" },
+      { id: "abgang-4-2", label: "Schrankschlüssel Trainingsmaterialien", textInput: true, textInputPlaceholder: "Schlüsselnummer" },
       { id: "abgang-4-3", label: "Schlüssel zum Tablet Stadion Schiedsrichterkabine ____" },
       { id: "abgang-4-4", label: "Schlüssel zum Tablet Stelzenberg in Schiedsrichterkabine" },
       { id: "abgang-4-5", label: "100 EUR Pfand zurückgeben" }

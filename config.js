@@ -1,6 +1,26 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Abschnitte einfrieren",
+        items: [
+          "Neuer Button \"Speichern & Einfrieren\" am Ende jedes Abschnitts (Zugang / Abgang).",
+          "Gesperrter Abschnitt: alle Felder und Checkboxen sind deaktiviert, Unterschriften können nicht mehr gezeichnet werden.",
+          "Sperre kann mit \"Sperre aufheben\" (mit Bestätigung) wieder gelöst werden.",
+          "Sperrstatus wird in der JSON-Datei gespeichert und beim nächsten Öffnen wiederhergestellt."
+        ]
+      },
+      {
+        title: "Schlüsselfelder",
+        items: [
+          "Beim Schrankschlüssel (Zugang & Abgang) erscheint nach Aktivieren der Checkbox jetzt ebenfalls ein Eingabefeld für die Schlüsselnummer."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [

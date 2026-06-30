@@ -255,3 +255,19 @@ button.btn:disabled { opacity: 0.6; cursor: default; }
 
 .conditional-field { display: none; margin-top: 8px; }
 .conditional-field.visible { display: block; }
+
+.locked-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--green-light);
+  border: 1px solid #a8d5bc;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+}
+.section-locked .signature-box canvas { cursor: default; }

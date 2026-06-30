@@ -43,7 +43,8 @@ function emptyChecklistSection() {
     unterschriftTrainer: "",
     unterschriftFunktionaer: "",
     ort: "",
-    datum: ""
+    datum: "",
+    gesperrt: false
   };
 }
 
@@ -422,6 +423,24 @@ function setupDetail() {
   bindSectionFieldEvents("zugang");
   bindSectionFieldEvents("abgang");
   initSignaturePads();
+
+  ["zugang", "abgang"].forEach((sectionKey) => {
+    document.getElementById(sectionKey + "-btn-sperren").addEventListener("click", () => {
+      const eintrag = getCurrentEintrag();
+      if (!eintrag) return;
+      eintrag[sectionKey].gesperrt = true;
+      persist();
+      applyLockedState(sectionKey, true);
+    });
+    document.getElementById(sectionKey + "-btn-entsperren").addEventListener("click", () => {
+      if (!confirm("Sperre wirklich aufheben? Der Abschnitt kann dann wieder bearbeitet werden.")) return;
+      const eintrag = getCurrentEintrag();
+      if (!eintrag) return;
+      eintrag[sectionKey].gesperrt = false;
+      persist();
+      applyLockedState(sectionKey, false);
+    });
+  });
 }
 
 function bindHeaderFieldEvents() {
@@ -605,6 +624,19 @@ function fillSection(sectionKey, section) {
   document.getElementById(sectionKey + "-abgeschlossen").checked = section.abgeschlossen;
   document.getElementById(sectionKey + "-ort").value = section.ort;
   document.getElementById(sectionKey + "-datum").value = section.datum;
+  applyLockedState(sectionKey, !!section.gesperrt);
+}
+
+function applyLockedState(sectionKey, gesperrt) {
+  const subtab = document.getElementById("subtab-" + sectionKey);
+  subtab.querySelectorAll("input, textarea").forEach((el) => { el.disabled = gesperrt; });
+  subtab.querySelectorAll("[data-clear-sig]").forEach((btn) => { btn.disabled = gesperrt; });
+  SIGNATURE_FIELDS.filter((f) => f.sectionKey === sectionKey).forEach((f) => {
+    signaturePads[f.canvasId]?.setLocked(gesperrt);
+  });
+  subtab.classList.toggle("section-locked", gesperrt);
+  document.getElementById(sectionKey + "-locked-banner").style.display = gesperrt ? "flex" : "none";
+  document.getElementById(sectionKey + "-lock-row").style.display = gesperrt ? "none" : "flex";
 }
 
 function checklistItemRowHtml(item, section, isSubItem) {
