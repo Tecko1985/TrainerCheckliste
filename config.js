@@ -1,6 +1,17 @@
-const APP_VERSION = "1.1";
+const APP_VERSION = "1.2";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.2",
+    groups: [
+      {
+        title: "Checkliste Zugang/Abgang",
+        items: [
+          "Eingabefeld für die Schlüsselnummer erscheint, sobald \"Z-Schlüssel\" abgehakt wird."
+        ]
+      }
+    ]
+  },
   {
     version: "1.1",
     groups: [

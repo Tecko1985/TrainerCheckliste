@@ -33,6 +33,7 @@ function emptyChecklistSection() {
     headerChecked: false,
     headerDatum: "",
     items: {},
+    itemTexts: {},
     bemerkungen: "",
     nichtAbgeschlossen: false,
     nichtAbgeschlossenGrund: "",
@@ -50,6 +51,7 @@ function ensureChecklistSectionFields(s) {
     if (s[k] === undefined) s[k] = d[k];
   });
   if (typeof s.items !== "object" || s.items === null) s.items = {};
+  if (typeof s.itemTexts !== "object" || s.itemTexts === null) s.itemTexts = {};
 }
 
 function emptyTrainerEintrag() {
@@ -435,6 +437,16 @@ function bindSectionFieldEvents(sectionKey) {
     const eintrag = getCurrentEintrag();
     if (!eintrag) return;
     eintrag[sectionKey].items[cb.dataset.itemId] = cb.checked;
+    const textInput = cb.closest(".checklist-item-row").querySelector("[data-item-text-id]");
+    if (textInput) textInput.classList.toggle("visible", cb.checked);
+    persist();
+  });
+  checklist.addEventListener("input", (e) => {
+    const textInput = e.target.closest("[data-item-text-id]");
+    if (!textInput) return;
+    const eintrag = getCurrentEintrag();
+    if (!eintrag) return;
+    eintrag[sectionKey].itemTexts[textInput.dataset.itemTextId] = textInput.value;
     persist();
   });
 
@@ -560,15 +572,20 @@ function fillSection(sectionKey, section) {
 
 function checklistItemRowHtml(item, section, isSubItem) {
   if (!item.label) return "";
-  const checked = section.items[item.id] ? "checked" : "";
+  const isChecked = !!section.items[item.id];
+  const checked = isChecked ? "checked" : "";
   const verantwortlich = !isSubItem && item.verantwortlich
     ? `<span class="checklist-verantwortlich">${escapeHtml(item.verantwortlich)}</span>` : "";
+  const textInput = item.textInput
+    ? `<input type="text" class="checklist-item-text${isChecked ? " visible" : ""}" data-item-text-id="${escapeHtml(item.id)}" placeholder="${escapeHtml(item.textInputPlaceholder || "")}" value="${escapeHtml(section.itemTexts[item.id] || "")}" />`
+    : "";
   return `
     <div class="checklist-item-row">
       <label>
         <input type="checkbox" data-item-id="${escapeHtml(item.id)}" ${checked} />
         <span>${escapeHtml(item.label)}</span>
       </label>
+      ${textInput}
       ${verantwortlich}
     </div>
   `;
