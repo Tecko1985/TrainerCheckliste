@@ -1,0 +1,32 @@
+const APP_VERSION = "1.0";
+
+const APP_CHANGELOG = [
+  {
+    version: "1.0",
+    groups: [
+      {
+        title: "Trainer-Einträge",
+        items: [
+          "Übersicht aller Trainer-Einträge mit Status-Badges für Zugang und Abgang, Suche nach Name.",
+          "Neuen Eintrag anlegen, Stammdaten (Name, Vorname, Geburtsdatum, Anschrift, Telefon, E-Mail) erfassen.",
+          "Eintrag komplett löschen (mit Sicherheitsabfrage)."
+        ]
+      },
+      {
+        title: "Checklisten Zugang & Abgang",
+        items: [
+          "Beide Checklisten 1:1 aus der Papier-Vorlage digitalisiert, inkl. aller Unterpunkte.",
+          "Jeder Punkt einzeln abhakbar, Bemerkungsfeld, Status \"konnte nicht abgeschlossen werden, weil…\" oder \"abgeschlossen\".",
+          "Je eine digitale Sammel-Unterschrift von Trainer/Betreuer und Geschäftsstelle pro Abschnitt (Maus/Touch)."
+        ]
+      },
+      {
+        title: "Daten & Speicherung",
+        items: [
+          "Speicherung ausschließlich über Nextcloud-WebDAV, automatisches Speichern bei jeder Änderung.",
+          "Optionaler CORS-Proxy für Zugriffe von Hosts, die der Nextcloud-Server nicht direkt erlaubt."
+        ]
+      }
+    ]
+  }
+];
