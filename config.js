@@ -1,6 +1,17 @@
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.3";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.3",
+    groups: [
+      {
+        title: "Trainer-Liste",
+        items: [
+          "Mehr Abstand zwischen Suche/Filter und der Eintragsliste."
+        ]
+      }
+    ]
+  },
   {
     version: "1.2",
     groups: [
