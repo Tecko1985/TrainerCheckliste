@@ -433,7 +433,9 @@ function setupDetail() {
       applyLockedState(sectionKey, true);
     });
     document.getElementById(sectionKey + "-btn-entsperren").addEventListener("click", () => {
-      if (!confirm("Sperre wirklich aufheben? Der Abschnitt kann dann wieder bearbeitet werden.")) return;
+      const pw = prompt("Passwort eingeben, um die Sperre aufzuheben:");
+      if (pw === null) return;
+      if (pw !== "sc1911") { alert("Falsches Passwort."); return; }
       const eintrag = getCurrentEintrag();
       if (!eintrag) return;
       eintrag[sectionKey].gesperrt = false;
