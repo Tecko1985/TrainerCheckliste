@@ -21,23 +21,24 @@ npx serve .
 
 ## Bekannte Einschränkung: CORS
 
-Direkte WebDAV-Aufrufe vom Browser zur Nextcloud sind serverseitig oft per
-CORS blockiert (im Schwesterprojekt `sc-heiligenstadt-budget` mit `curl`
-verifiziert, unabhängig vom Share-Typ). Das Feld **CORS-Proxy-URL** im
-Verbindungsformular kann eine separat deployte Worker-/Proxy-URL aufnehmen,
-die die Anfrage serverseitig weiterleitet (siehe `cors-proxy-worker.js` im
-Materialliste-Projekt als Vorlage).
+Bestätigt am 2026-06-30: Zugangsdaten, Pfad und Schreibrechte funktionieren
+(per `curl` verifiziert, Testdatei erfolgreich angelegt), aber der direkte
+WebDAV-Aufruf aus dem Browser schlägt mit `TypeError: Failed to fetch` fehl –
+der Nextcloud-Server sendet keine `Access-Control-Allow-Origin`-Header.
 
-Der dort bereits deployte Proxy ist mit `ALLOWED_ORIGIN` fest auf
-`https://tecko1985.github.io` beschränkt und nimmt aktuell **keine**
-Anfragen von dieser App entgegen (anderer Origin, solange sie nicht unter
-demselben GitHub-Pages-Account gehostet wird). Optionen für später:
+**Lösung: `cors-proxy-worker.js` deployen.** Dieses Projekt hat einen eigenen
+Cloudflare-Worker-Proxy (im Unterschied zu Materialliste mit mehreren
+erlaubten Origins gleichzeitig, siehe `ALLOWED_ORIGINS` im Worker-Code):
 
-- Diese App ebenfalls unter `https://tecko1985.github.io/...` deployen, dann
-  funktioniert der bestehende Proxy ohne Änderung.
-- Einen zweiten, eigenen Cloudflare-Worker für diese App deployen.
-- Prüfen, ob der Nextcloud-Server direkt CORS-Header für den tatsächlich
-  genutzten Origin ausliefern kann (dann ist gar kein Proxy nötig).
+1. dash.cloudflare.com → Workers & Pages → Create → "Hello World"
+2. Code aus `cors-proxy-worker.js` einfügen, Deploy
+3. Die resultierende `*.workers.dev`-URL im Feld **CORS-Proxy-URL** des
+   Verbindungsformulars eintragen (`index.html` / Settings)
+4. Bei neuen Origins (z.B. spätere GitHub-Pages-URL) `ALLOWED_ORIGINS` im
+   Worker-Code ergänzen und neu deployen
+
+Ohne deployten Proxy funktioniert die App-Verbindung zur Nextcloud **nicht**,
+unabhängig von korrekten Zugangsdaten.
 
 ## Datenmodell
 
