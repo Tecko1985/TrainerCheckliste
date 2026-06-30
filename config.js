@@ -1,6 +1,19 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Trainer-Liste",
+        items: [
+          "Statusfilter für Eintritt und Austritt (Offen/In Arbeit/Abgeschlossen), kombinierbar mit der Suche.",
+          "Datum direkt unter dem Status-Badge sichtbar, Spaltenköpfe der Liste korrekt ausgerichtet.",
+          "Spalten in \"Eintritt\"/\"Austritt\" umbenannt."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [
