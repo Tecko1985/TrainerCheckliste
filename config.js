@@ -1,6 +1,19 @@
-const APP_VERSION = "1.1";
+const APP_VERSION = "1.2";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.2",
+    groups: [
+      {
+        title: "Anmeldung statt Zugangsdaten",
+        items: [
+          "Der Zugriff auf die Nextcloud läuft jetzt über die zentrale Anmeldung in der Tools-Übersicht: einmal dort anmelden, danach werden die Checklisten automatisch geladen und gespeichert – auch am Handy.",
+          "Das frühere Verbindungsformular mit WebDAV-Adresse, Benutzername und App-Passwort entfällt; es muss kein Passwort mehr auf dem Gerät eingegeben oder gespeichert werden.",
+          "Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen (die Gruppen-Rechte werden serverseitig geprüft)."
+        ]
+      }
+    ]
+  },
   {
     version: "1.1",
     groups: [
