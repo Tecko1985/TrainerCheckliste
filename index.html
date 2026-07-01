@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>📋 TrainerCheckliste</title>
+<meta name="theme-color" content="#1a56a0" />
+<link rel="stylesheet" href="style.css?v=1.0" />
+</head>
+<body>
+
+<header>
+  <h1>📋 TrainerCheckliste <span class="version-badge" id="version-badge"></span></h1>
+  <div class="file-status" id="file-status"><span class="dot"></span><span class="label">Nicht verbunden</span></div>
+</header>
+
+<!-- Verbindungs-Screen -->
+<div class="connect-screen" id="connect-screen">
+  <div class="card" id="cloud-login-section">
+    <h2>Anmeldung erforderlich</h2>
+    <p class="muted">
+      Die Trainer-Einträge (inkl. persönlicher Daten und Unterschriften) liegen in der Vereins-Nextcloud.
+      Melde dich einmalig in der <strong>Tools-Übersicht</strong> an – danach werden die Checklisten
+      automatisch geladen und gespeichert, ganz ohne Zugangsdaten oder App-Passwort auf diesem Gerät.
+      Funktioniert auch mobil.
+    </p>
+    <div class="btn-row" style="justify-content:flex-start;">
+      <a class="btn" href="https://tecko1985.github.io/ToolsUebersicht/">Zur Tools-Übersicht &amp; anmelden</a>
+    </div>
+    <p class="muted" id="cloud-error" style="display:none; color:#c0392b; margin-top:12px;"></p>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app-shell" style="display:none;">
+  <nav>
+    <button data-tab="liste" class="active">Trainer-Einträge</button>
+    <button data-tab="einstellungen">Einstellungen</button>
+  </nav>
+
+  <main>
+
+    <section class="tab-section active" id="tab-liste">
+
+      <!-- Listenansicht -->
+      <div id="view-liste">
+        <div class="card">
+          <div class="detail-header">
+            <h2 style="margin-bottom:0;">Trainer-Einträge</h2>
+            <button class="btn" id="btn-neuer-eintrag" type="button">Neuer Eintrag</button>
+          </div>
+          <div class="btn-row" style="justify-content:flex-start; align-items:flex-end; margin-top:14px; margin-bottom:22px;">
+            <div class="form-field" style="max-width:260px;">
+              <label>Suche</label>
+              <input type="text" id="liste-search-input" placeholder="Name…" />
+            </div>
+            <div class="form-field" style="max-width:200px;">
+              <label>Eintritt-Status</label>
+              <select id="liste-filter-zugang">
+                <option value="">Alle</option>
+                <option value="offen">Offen</option>
+                <option value="arbeit">In Arbeit</option>
+                <option value="fertig">Abgeschlossen</option>
+              </select>
+            </div>
+            <div class="form-field" style="max-width:200px;">
+              <label>Austritt-Status</label>
+              <select id="liste-filter-abgang">
+                <option value="">Alle</option>
+                <option value="offen">Offen</option>
+                <option value="arbeit">In Arbeit</option>
+                <option value="fertig">Abgeschlossen</option>
+              </select>
+            </div>
+          </div>
+          <div class="empty-state" id="liste-empty" style="display:none;">Noch keine Trainer-Einträge angelegt.</div>
+          <div class="empty-state" id="liste-empty-filtered" style="display:none;">Keine Einträge gefunden.</div>
+          <div class="eintrag-row-header" id="liste-header" style="display:none;">
+            <button type="button" class="liste-sort-btn" data-sort="name">Name<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="geburtsdatum">Geburtsdatum<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="zugang">Eintritt<span class="sort-arrow"></span></button>
+            <button type="button" class="liste-sort-btn" data-sort="abgang">Austritt<span class="sort-arrow"></span></button>
+            <span></span>
+          </div>
+          <div id="liste-rows"></div>
+        </div>
+      </div>
+
+      <!-- Detailansicht -->
+      <div id="view-detail" style="display:none;">
+        <div class="card">
+          <div class="detail-header">
+            <h2 style="margin-bottom:0;" id="detail-title">Trainer-Eintrag</h2>
+            <div class="btn-row" style="justify-content:flex-end;">
+              <button class="btn danger small" id="btn-eintrag-loeschen" type="button">Eintrag löschen</button>
+              <button class="btn secondary small" id="btn-zurueck-liste" type="button">Zurück zur Liste</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-field"><label>Name *</label><input type="text" id="d-name" /></div>
+            <div class="form-field"><label>Vorname *</label><input type="text" id="d-vorname" /></div>
+            <div class="form-field"><label>Geburtsdatum</label><input type="date" id="d-geburtsdatum" /></div>
+            <div class="form-field"><label>Telefonnummer</label><input type="text" id="d-telefon" /></div>
+            <div class="form-field" style="grid-column: 1 / -1;"><label>Anschrift</label><input type="text" id="d-anschrift" /></div>
+            <div class="form-field"><label>E-Mail-Adresse</label><input type="email" id="d-email" /></div>
+          </div>
+          <div class="btn-row" style="justify-content:flex-start; gap:24px;">
+            <label class="checkbox-label"><input type="checkbox" id="d-header-zugang-checked" /> Trainerzugang</label>
+            <div class="form-field" style="max-width:170px;"><input type="date" id="d-header-zugang-datum" /></div>
+            <label class="checkbox-label"><input type="checkbox" id="d-header-abgang-checked" /> Trainerabgang</label>
+            <div class="form-field" style="max-width:170px;"><input type="date" id="d-header-abgang-datum" /></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="subnav">
+            <button data-subtab="zugang" class="active">Trainer-/Betreuerzugang</button>
+            <button data-subtab="abgang">Trainer-/Betreuerabgang</button>
+          </div>
+
+          <div class="subtab-section active" id="subtab-zugang">
+            <div id="zugang-checklist"></div>
+            <div class="form-field" style="margin-top:14px;">
+              <label>Bemerkungen</label>
+              <textarea id="zugang-bemerkungen" rows="3"></textarea>
+            </div>
+            <div class="form-field" style="margin-top:10px;">
+              <label class="checkbox-label"><input type="checkbox" id="zugang-nicht-abgeschlossen" /> Einarbeitung konnte nicht abgeschlossen werden, weil …</label>
+              <div class="conditional-field" id="zugang-grund-wrap">
+                <textarea id="zugang-grund" rows="2" placeholder="Grund (optional, aber empfohlen)"></textarea>
+              </div>
+            </div>
+            <div class="form-field" style="margin-top:10px;">
+              <label class="checkbox-label"><input type="checkbox" id="zugang-abgeschlossen" /> Einarbeitung ist abgeschlossen und wird in der Geschäftsstelle während der gesamten Vertragslaufzeit (einschließlich direkter Vertragsverlängerungen) archiviert</label>
+            </div>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-field"><label>Ort</label><input type="text" id="zugang-ort" /></div>
+              <div class="form-field"><label>Datum</label><input type="date" id="zugang-datum" /></div>
+            </div>
+            <div class="signature-row">
+              <div class="signature-box">
+                <label>Unterschrift Trainer/Betreuer</label>
+                <canvas id="zugang-sig-trainer"></canvas>
+                <div class="btn-row"><button type="button" class="btn secondary small" data-clear-sig="zugang-sig-trainer">Löschen</button></div>
+              </div>
+              <div class="signature-box">
+                <label>Unterschrift Geschäftsstelle</label>
+                <canvas id="zugang-sig-funktionaer"></canvas>
+                <div class="btn-row"><button type="button" class="btn secondary small" data-clear-sig="zugang-sig-funktionaer">Löschen</button></div>
+              </div>
+            </div>
+            <div id="zugang-locked-banner" class="locked-banner" style="display:none;">
+              <span>Dieser Abschnitt ist gesperrt und kann nicht mehr bearbeitet werden.</span>
+              <button type="button" class="btn secondary small" id="zugang-btn-entsperren">Sperre aufheben</button>
+            </div>
+            <div class="btn-row" id="zugang-lock-row" style="justify-content:flex-end; margin-top:18px;">
+              <button type="button" class="btn success" id="zugang-btn-sperren">Speichern &amp; Einfrieren</button>
+            </div>
+          </div>
+
+          <div class="subtab-section" id="subtab-abgang">
+            <p class="muted" id="abgang-info-text" style="margin-bottom:14px;"></p>
+            <div id="abgang-checklist"></div>
+            <div class="form-field" style="margin-top:14px;">
+              <label>Bemerkungen</label>
+              <textarea id="abgang-bemerkungen" rows="3"></textarea>
+            </div>
+            <div class="form-field" style="margin-top:10px;">
+              <label class="checkbox-label"><input type="checkbox" id="abgang-nicht-abgeschlossen" /> Trainer-/Betreuerabgang konnte nicht abgeschlossen werden, weil …</label>
+              <div class="conditional-field" id="abgang-grund-wrap">
+                <textarea id="abgang-grund" rows="2" placeholder="Grund (optional, aber empfohlen)"></textarea>
+              </div>
+            </div>
+            <div class="form-field" style="margin-top:10px;">
+              <label class="checkbox-label"><input type="checkbox" id="abgang-abgeschlossen" /> Trainer-/Betreuerabgang ist abgeschlossen und wird in der Geschäftsstelle 3 Jahre datenschutzkonform archiviert</label>
+            </div>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-field"><label>Ort</label><input type="text" id="abgang-ort" /></div>
+              <div class="form-field"><label>Datum</label><input type="date" id="abgang-datum" /></div>
+            </div>
+            <div class="signature-row">
+              <div class="signature-box">
+                <label>Unterschrift Trainer/Betreuer</label>
+                <canvas id="abgang-sig-trainer"></canvas>
+                <div class="btn-row"><button type="button" class="btn secondary small" data-clear-sig="abgang-sig-trainer">Löschen</button></div>
+              </div>
+              <div class="signature-box">
+                <label>Unterschrift Geschäftsstelle</label>
+                <canvas id="abgang-sig-funktionaer"></canvas>
+                <div class="btn-row"><button type="button" class="btn secondary small" data-clear-sig="abgang-sig-funktionaer">Löschen</button></div>
+              </div>
+            </div>
+            <div id="abgang-locked-banner" class="locked-banner" style="display:none;">
+              <span>Dieser Abschnitt ist gesperrt und kann nicht mehr bearbeitet werden.</span>
+              <button type="button" class="btn secondary small" id="abgang-btn-entsperren">Sperre aufheben</button>
+            </div>
+            <div class="btn-row" id="abgang-lock-row" style="justify-content:flex-end; margin-top:18px;">
+              <button type="button" class="btn success" id="abgang-btn-sperren">Speichern &amp; Einfrieren</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Einstellungen -->
+    <section class="tab-section" id="tab-einstellungen">
+      <div class="card">
+        <h3>Speicherort</h3>
+        <p class="muted" style="margin-bottom:6px;">Verbunden mit: <strong id="settings-file-name">—</strong></p>
+        <p class="muted" style="margin-bottom:10px;" id="settings-save-status">Autospeichern aktiv</p>
+        <div class="btn-row" style="justify-content:flex-start;">
+          <a class="btn secondary small" href="https://tecko1985.github.io/ToolsUebersicht/">Zur Tools-Übersicht (an-/abmelden)</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Versionshistorie <span class="version-badge" id="version-badge-2"></span></h3>
+        <div id="changelog-list"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="checklist-schema.js?v=1.0"></script>
+<script src="config.js?v=1.0"></script>
+<script src="db.js?v=1.0"></script>
+<script src="signature-pad.js?v=1.0"></script>
+<script src="app.js?v=1.0"></script>
+</body>
+</html>
