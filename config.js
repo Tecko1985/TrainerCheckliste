@@ -1,6 +1,18 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Stabilität & Datensicherheit",
+        items: [
+          "Konfliktschutz beim Speichern: Bearbeiten zwei Geräte gleichzeitig, wird der Konflikt erkannt und der aktuelle Stand neu geladen, statt dass Änderungen stillschweigend verloren gehen (zusammen mit dem Update der Tools-Übersicht-Anmeldung).",
+          "Gesperrte (unterschriebene) Checklisten: Auch das Löschen des ganzen Eintrags verlangt jetzt das Passwort, und die Kopfzeilen-Felder (Haken + Datum im Stammdaten-Block) sind mit gesperrt."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [

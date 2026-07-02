@@ -165,7 +165,9 @@ function persist() {
       const time = new Date().toLocaleTimeString("de-DE");
       setSaveStatus(`Zuletzt automatisch gespeichert um ${time}`);
     } catch (e) {
-      if (e instanceof NotLoggedInError) {
+      if (e instanceof ConflictError) {
+        await reloadAfterConflict();
+      } else if (e instanceof NotLoggedInError) {
         setSaveStatus("Sitzung abgelaufen — bitte in der Tools-Übersicht neu anmelden.");
       } else {
         console.error("Speichern fehlgeschlagen", e);
@@ -173,6 +175,27 @@ function persist() {
       }
     }
   }, 300);
+}
+
+// Konflikt beim Speichern: ein anderes Gerät hat zwischenzeitlich gespeichert.
+// Remote-Stand übernehmen und neu rendern — die letzte eigene Eingabe geht dabei
+// sichtbar verloren (Hinweis unten), statt dass die Änderung des anderen Geräts
+// stillschweigend überschrieben wird.
+async function reloadAfterConflict() {
+  try {
+    const data = await gatewayLoad();
+    appData = data && Array.isArray(data.trainerEintraege) ? data : { trainerEintraege: [] };
+    migrateData(appData);
+    if (currentEintragId) {
+      if (getCurrentEintrag()) renderDetail();
+      else closeDetail();
+    }
+    renderListe();
+    setSaveStatus("⚠️ Anderes Gerät hat gleichzeitig gespeichert — Stand neu geladen, letzte Eingabe bitte prüfen.");
+  } catch (e) {
+    console.error("Neu laden nach Konflikt fehlgeschlagen", e);
+    setSaveStatus("Speicher-Konflikt — bitte Seite neu laden.");
+  }
 }
 
 // ---------- Navigation ----------
@@ -254,6 +277,13 @@ function deleteEintrag(id) {
   const eintrag = appData.trainerEintraege.find((e) => e.id === id);
   if (!eintrag) return;
   const label = `${eintrag.vorname} ${eintrag.name}`.trim() || "diesen Eintrag";
+  // Gesperrte (unterschriebene) Checklisten sind vor Änderungen geschützt —
+  // das Löschen des ganzen Eintrags braucht daher dasselbe Passwort wie das Entsperren.
+  if (eintrag.zugang.gesperrt || eintrag.abgang.gesperrt) {
+    const pw = prompt(`${label} enthält eine gesperrte (abgeschlossene) Checkliste. Passwort eingeben, um trotzdem zu löschen:`);
+    if (pw === null) return;
+    if (pw !== "sc1911") { alert("Falsches Passwort."); return; }
+  }
   if (!confirm(`${label} wirklich unwiderruflich löschen?`)) return;
   appData.trainerEintraege = appData.trainerEintraege.filter((e) => e.id !== id);
   persist();
@@ -583,6 +613,13 @@ function fillSection(sectionKey, section) {
 function applyLockedState(sectionKey, gesperrt) {
   const subtab = document.getElementById("subtab-" + sectionKey);
   subtab.querySelectorAll("input, textarea").forEach((el) => { el.disabled = gesperrt; });
+  // Die Kopfzeilen-Felder (Haken + Datum im Stammdaten-Block) schreiben in dieselbe
+  // Sektion, liegen aber außerhalb des Subtabs — mit sperren, sonst bleibt eine
+  // Hintertür in die gesperrte Checkliste offen.
+  const headerChecked = document.getElementById("d-header-" + sectionKey + "-checked");
+  const headerDatum = document.getElementById("d-header-" + sectionKey + "-datum");
+  if (headerChecked) headerChecked.disabled = gesperrt;
+  if (headerDatum) headerDatum.disabled = gesperrt;
   subtab.querySelectorAll("[data-clear-sig]").forEach((btn) => { btn.disabled = gesperrt; });
   SIGNATURE_FIELDS.filter((f) => f.sectionKey === sectionKey).forEach((f) => {
     signaturePads[f.canvasId]?.setLocked(gesperrt);
