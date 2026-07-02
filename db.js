@@ -111,3 +111,28 @@ async function gatewaySave(dataObj) {
   const body = await gatewayRequest(payload);
   gatewayRev = typeof body.rev === "string" ? body.rev : null;
 }
+
+// Serverseitige Prüfung des Aktions-Passworts (Checkliste entsperren / Eintrag
+// mit gesperrter Checkliste löschen). Das Passwort liegt als Worker-Secret im
+// landingpage-Worker, nicht mehr im öffentlichen Quellcode. Bewusst ohne
+// Login-Token (die Aktion ist im Worker nicht an eine Sitzung gebunden).
+// Gibt true/false zurück; wirft, wenn die Prüfung selbst nicht möglich ist.
+async function verifyActionPassword(scope, password) {
+  let resp;
+  try {
+    resp = await fetch(GATEWAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "verify-action-password", scope, password })
+    });
+  } catch (_) {
+    throw new Error("Keine Verbindung zum Server — Passwortprüfung nicht möglich.");
+  }
+  if (resp.status === 403) return false;
+  if (resp.ok) return true;
+  const body = await resp.json().catch(() => ({}));
+  if (resp.status === 400 && body.error === "Unbekannte Aktion") {
+    throw new Error("Der Server kennt die Passwortprüfung noch nicht — das Worker-Update (landingpage) muss erst deployed werden.");
+  }
+  throw new Error(body.error || ("Passwortprüfung fehlgeschlagen (HTTP " + resp.status + ")"));
+}

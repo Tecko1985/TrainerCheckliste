@@ -273,16 +273,30 @@ function createNewEintrag() {
   openEintrag(eintrag.id);
 }
 
-function deleteEintrag(id) {
+// Fragt das Aktions-Passwort ab und lässt es serverseitig prüfen (siehe
+// verifyActionPassword in db.js). true = weitermachen; Meldungen kommen von hier.
+async function askAndVerifyActionPassword(promptText) {
+  const pw = prompt(promptText);
+  if (pw === null) return false;
+  let ok;
+  try {
+    ok = await verifyActionPassword("checkliste-sperre", pw);
+  } catch (e) {
+    alert(e.message);
+    return false;
+  }
+  if (!ok) alert("Falsches Passwort.");
+  return ok;
+}
+
+async function deleteEintrag(id) {
   const eintrag = appData.trainerEintraege.find((e) => e.id === id);
   if (!eintrag) return;
   const label = `${eintrag.vorname} ${eintrag.name}`.trim() || "diesen Eintrag";
   // Gesperrte (unterschriebene) Checklisten sind vor Änderungen geschützt —
   // das Löschen des ganzen Eintrags braucht daher dasselbe Passwort wie das Entsperren.
   if (eintrag.zugang.gesperrt || eintrag.abgang.gesperrt) {
-    const pw = prompt(`${label} enthält eine gesperrte (abgeschlossene) Checkliste. Passwort eingeben, um trotzdem zu löschen:`);
-    if (pw === null) return;
-    if (pw !== "sc1911") { alert("Falsches Passwort."); return; }
+    if (!(await askAndVerifyActionPassword(`${label} enthält eine gesperrte (abgeschlossene) Checkliste. Passwort eingeben, um trotzdem zu löschen:`))) return;
   }
   if (!confirm(`${label} wirklich unwiderruflich löschen?`)) return;
   appData.trainerEintraege = appData.trainerEintraege.filter((e) => e.id !== id);
@@ -413,10 +427,8 @@ function setupDetail() {
       persist();
       applyLockedState(sectionKey, true);
     });
-    document.getElementById(sectionKey + "-btn-entsperren").addEventListener("click", () => {
-      const pw = prompt("Passwort eingeben, um die Sperre aufzuheben:");
-      if (pw === null) return;
-      if (pw !== "sc1911") { alert("Falsches Passwort."); return; }
+    document.getElementById(sectionKey + "-btn-entsperren").addEventListener("click", async () => {
+      if (!(await askAndVerifyActionPassword("Passwort eingeben, um die Sperre aufzuheben:"))) return;
       const eintrag = getCurrentEintrag();
       if (!eintrag) return;
       eintrag[sectionKey].gesperrt = false;

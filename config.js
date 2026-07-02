@@ -1,6 +1,17 @@
-const APP_VERSION = "1.1";
+const APP_VERSION = "1.2";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.2",
+    groups: [
+      {
+        title: "Sicherheit",
+        items: [
+          "Das Passwort zum Entsperren gesperrter Checklisten (und zum Löschen solcher Einträge) wird jetzt serverseitig geprüft und steht nicht mehr im öffentlichen Quellcode der App."
+        ]
+      }
+    ]
+  },
   {
     version: "1.1",
     groups: [
