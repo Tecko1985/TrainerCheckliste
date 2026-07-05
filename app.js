@@ -218,7 +218,7 @@ function renderAll() {
 }
 
 function renderVersionInfo() {
-  document.querySelectorAll("#version-badge, #version-badge-2").forEach((el) => {
+  document.querySelectorAll("#version-badge, #version-badge-2, #version-badge-nav").forEach((el) => {
     if (el) el.textContent = "v" + APP_VERSION;
   });
   const list = document.getElementById("changelog-list");
