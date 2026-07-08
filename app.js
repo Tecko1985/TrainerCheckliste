@@ -204,6 +204,12 @@ function setupNav() {
   document.querySelectorAll("nav button").forEach((btn) => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
+
+  const versionBadgeHeader = document.getElementById("version-badge");
+  versionBadgeHeader.addEventListener("click", () => switchTab("einstellungen"));
+  versionBadgeHeader.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab("einstellungen"); }
+  });
 }
 
 function switchTab(tab) {
