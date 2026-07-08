@@ -1,28 +1,6 @@
-const APP_VERSION = "1.2";
+const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
-  {
-    version: "1.2",
-    groups: [
-      {
-        title: "Versionsbadge",
-        items: [
-          "Der Versionshinweis oben neben dem Titel ist jetzt anklickbar und führt direkt zu dieser Änderungsübersicht."
-        ]
-      }
-    ]
-  },
-  {
-    version: "1.1",
-    groups: [
-      {
-        title: "Oberfläche",
-        items: [
-          "Doppelte Versionsanzeige im Einstellungen-Button entfernt."
-        ]
-      }
-    ]
-  },
   {
     version: "1.0",
     groups: [
