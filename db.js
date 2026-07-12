@@ -112,6 +112,11 @@ async function gatewaySave(dataObj) {
   gatewayRev = typeof body.rev === "string" ? body.rev : null;
 }
 
+// Liefert {username, isAdmin, groupIds, vorname, nachname, canEdit} der eingeloggten Person.
+async function fetchMe() {
+  return gatewayRequest({ action: "me", app: GATEWAY_APP_ID });
+}
+
 // Serverseitige Prüfung des Aktions-Passworts (Checkliste entsperren / Eintrag
 // mit gesperrter Checkliste löschen). Das Passwort liegt als Worker-Secret im
 // landingpage-Worker, nicht mehr im öffentlichen Quellcode. Bewusst ohne

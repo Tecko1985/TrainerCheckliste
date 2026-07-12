@@ -1,6 +1,17 @@
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.1";
 
 const APP_CHANGELOG = [
+  {
+    version: "1.1",
+    groups: [
+      {
+        title: "Bearbeiten-Recht",
+        items: [
+          "Neue Einträge anlegen, alle Checklisten-Felder/Unterschriften ändern, Einträge löschen und Sperren/Entsperren jetzt an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt statt an reinen Tool-Zugriff."
+        ]
+      }
+    ]
+  },
   {
     version: "1.0",
     groups: [

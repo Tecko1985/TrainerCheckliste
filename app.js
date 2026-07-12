@@ -1,4 +1,6 @@
 let appData = { trainerEintraege: [] };
+let currentUser = null; // {username, isAdmin, groupIds, vorname, nachname, canEdit}
+function canEdit() { return !!(currentUser && (currentUser.isAdmin || currentUser.canEdit)); }
 let saveTimer = null;
 let currentEintragId = null;
 let listeSearchQuery = "";
@@ -114,6 +116,7 @@ async function init() {
       appData = data && Array.isArray(data.trainerEintraege) ? data : { trainerEintraege: [] };
       migrateData(appData);
       await FileStore.clearWebdavConfig(); // alte, im Klartext gespeicherte Zugangsdaten aufräumen
+      try { currentUser = await fetchMe(); } catch (_) { /* best effort */ }
       startApp();
       return;
     } catch (e) {
@@ -157,6 +160,10 @@ function setSaveStatus(text) {
 }
 
 function persist() {
+  if (!canEdit()) {
+    setSaveStatus("Nur Ansicht — kein Bearbeiten-Recht für dieses Tool.");
+    return;
+  }
   setSaveStatus("Speichert…");
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
@@ -273,6 +280,7 @@ function setupListe() {
 }
 
 function createNewEintrag() {
+  if (!canEdit()) return;
   const eintrag = emptyTrainerEintrag();
   appData.trainerEintraege.push(eintrag);
   persist();
@@ -296,6 +304,7 @@ async function askAndVerifyActionPassword(promptText) {
 }
 
 async function deleteEintrag(id) {
+  if (!canEdit()) return;
   const eintrag = appData.trainerEintraege.find((e) => e.id === id);
   if (!eintrag) return;
   const label = `${eintrag.vorname} ${eintrag.name}`.trim() || "diesen Eintrag";
@@ -427,6 +436,7 @@ function setupDetail() {
 
   ["zugang", "abgang"].forEach((sectionKey) => {
     document.getElementById(sectionKey + "-btn-sperren").addEventListener("click", () => {
+      if (!canEdit()) return;
       const eintrag = getCurrentEintrag();
       if (!eintrag) return;
       eintrag[sectionKey].gesperrt = true;
@@ -434,6 +444,7 @@ function setupDetail() {
       applyLockedState(sectionKey, true);
     });
     document.getElementById(sectionKey + "-btn-entsperren").addEventListener("click", async () => {
+      if (!canEdit()) return;
       if (!(await askAndVerifyActionPassword("Passwort eingeben, um die Sperre aufzuheben:"))) return;
       const eintrag = getCurrentEintrag();
       if (!eintrag) return;
