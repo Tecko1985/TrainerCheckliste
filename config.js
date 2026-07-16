@@ -2,6 +2,18 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
+    version: "1.2",
+    groups: [
+      {
+        title: "Schnelleres Speichern",
+        items: [
+          "Unterschriften werden als eigene Dateien in der Cloud abgelegt statt direkt in der Datenliste — die Liste bleibt dadurch klein und das automatische Speichern schnell, egal wie viele Checklisten unterschrieben sind.",
+          "Bestehende Unterschriften werden beim nächsten Speichern automatisch umgezogen; beim Löschen eines Eintrags oder Leeren einer Unterschrift wird die zugehörige Datei mit entfernt."
+        ]
+      }
+    ]
+  },
+  {
     version: "1.1",
     groups: [
       {

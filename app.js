@@ -43,6 +43,13 @@ function emptyChecklistSection() {
     abgeschlossen: false,
     unterschriftTrainer: "",
     unterschriftFunktionaer: "",
+    // Ausgelagerte Unterschriften (seit 1.1): PNG als eigene Gateway-Datei
+    // (dateien/<FileId>), in der JSON bleibt nur die Referenz — sonst wächst die
+    // Gesamtdatei mit jeder Unterschrift um ~30 KB (siehe Trainerdaten-Vorbild).
+    // Inline-Wert in unterschriftTrainer/-Funktionaer = noch nicht ausgelagerter
+    // Altbestand (übergangstolerant, wird beim nächsten Speichern ausgelagert).
+    unterschriftTrainerFileId: "",
+    unterschriftFunktionaerFileId: "",
     ort: "",
     datum: "",
     gesperrt: false
@@ -159,6 +166,31 @@ function setSaveStatus(text) {
   if (el) el.textContent = text;
 }
 
+// Lagert alle noch inline gespeicherten Unterschriften (base64-DataURLs) in eigene
+// Gateway-Dateien aus, bevor die JSON gespeichert wird — deckt neue Unterschriften
+// UND Altbestand ab (schleichende Migration beim nächsten Speichern). Bei einem
+// Upload-Fehler bleibt die Unterschrift inline in der JSON (alter Zustand, kein
+// Datenverlust) und wird beim nächsten erfolgreichen Speichern erneut versucht.
+async function uploadPendingSignatures() {
+  for (const eintrag of appData.trainerEintraege) {
+    for (const sectionKey of ["zugang", "abgang"]) {
+      const section = eintrag[sectionKey];
+      if (!section) continue;
+      for (const dataKey of ["unterschriftTrainer", "unterschriftFunktionaer"]) {
+        const dataUrl = section[dataKey];
+        if (!dataUrl || !/^data:image\/png;base64,/.test(dataUrl)) continue;
+        // Stabile FileId je Feld: Überschreiben statt Datei-Leichen bei jedem Strich.
+        const fileId = section[dataKey + "FileId"] || crypto.randomUUID();
+        try {
+          await gatewayFilePut(fileId, sectionKey + "-" + dataKey + ".png", dataUrl.slice(dataUrl.indexOf(",") + 1));
+          section[dataKey + "FileId"] = fileId;
+          section[dataKey] = "";
+        } catch (_) { /* inline lassen, nächster Save versucht es erneut */ }
+      }
+    }
+  }
+}
+
 function persist() {
   if (!canEdit()) {
     setSaveStatus("Nur Ansicht — kein Bearbeiten-Recht für dieses Tool.");
@@ -168,6 +200,7 @@ function persist() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try {
+      await uploadPendingSignatures();
       await gatewaySave(appData);
       const time = new Date().toLocaleTimeString("de-DE");
       setSaveStatus(`Zuletzt automatisch gespeichert um ${time}`);
@@ -314,6 +347,14 @@ async function deleteEintrag(id) {
     if (!(await askAndVerifyActionPassword(`${label} enthält eine gesperrte (abgeschlossene) Checkliste. Passwort eingeben, um trotzdem zu löschen:`))) return;
   }
   if (!confirm(`${label} wirklich unwiderruflich löschen?`)) return;
+  // Ausgelagerte Unterschrift-Dateien best-effort mitentfernen (die FileIds sind
+  // nach dem Löschen des Eintrags nirgends mehr referenziert).
+  for (const sectionKey of ["zugang", "abgang"]) {
+    for (const dataKey of ["unterschriftTrainer", "unterschriftFunktionaer"]) {
+      const fileId = eintrag[sectionKey] && eintrag[sectionKey][dataKey + "FileId"];
+      if (fileId) gatewayFileDelete(fileId).catch(() => { /* best effort */ });
+    }
+  }
   appData.trainerEintraege = appData.trainerEintraege.filter((e) => e.id !== id);
   persist();
   renderListe();
@@ -568,7 +609,18 @@ function initSignaturePads() {
     signaturePads[f.canvasId] = createSignaturePad(canvas, (dataUrl) => {
       const eintrag = getCurrentEintrag();
       if (!eintrag) return;
+      // Inline in den Eintrag — persist() lagert die DataURL beim Speichern in
+      // eine eigene Gateway-Datei aus (uploadPendingSignatures). Beim Leeren
+      // (clear-Button liefert "") auch die ausgelagerte Datei entfernen, sonst
+      // lädt der nächste Öffner die alte Unterschrift wieder aus der FileId.
       eintrag[f.sectionKey][f.dataKey] = dataUrl;
+      if (!dataUrl) {
+        const fileId = eintrag[f.sectionKey][f.dataKey + "FileId"];
+        if (fileId) {
+          eintrag[f.sectionKey][f.dataKey + "FileId"] = "";
+          gatewayFileDelete(fileId).catch(() => { /* best effort */ });
+        }
+      }
       persist();
     });
   });
@@ -624,7 +676,26 @@ function renderDetail() {
     const pad = signaturePads[f.canvasId];
     if (!pad) return;
     pad.resetSilent();
-    pad.loadDataURL(eintrag[f.sectionKey][f.dataKey]);
+    const inline = eintrag[f.sectionKey][f.dataKey];
+    if (inline) {
+      // Noch nicht ausgelagerter Altbestand bzw. gerade gezeichnete, noch nicht
+      // gespeicherte Unterschrift — direkt anzeigen.
+      pad.loadDataURL(inline);
+      return;
+    }
+    const fileId = eintrag[f.sectionKey][f.dataKey + "FileId"];
+    if (!fileId) return;
+    // Ausgelagerte Unterschrift asynchron nachladen. Guards: Eintrag inzwischen
+    // gewechselt ODER es wurde zwischenzeitlich neu gezeichnet (Inline-Feld belegt)
+    // -> Antwort verwerfen, sonst übermalt sie den aktuellen Zustand. Die DataURL
+    // geht NUR ins Pad, nie zurück in appData (sonst landete sie beim nächsten
+    // Speichern wieder inline in der JSON).
+    const eintragId = eintrag.id;
+    gatewayFileGetDataUrl(fileId).then((dataUrl) => {
+      if (!dataUrl || currentEintragId !== eintragId) return;
+      if (eintrag[f.sectionKey][f.dataKey]) return;
+      pad.loadDataURL(dataUrl);
+    }).catch(() => { /* best effort — Pad bleibt leer */ });
   });
 }
 
