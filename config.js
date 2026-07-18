@@ -2,29 +2,6 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
-    version: "1.2",
-    groups: [
-      {
-        title: "Schnelleres Speichern",
-        items: [
-          "Unterschriften werden als eigene Dateien in der Cloud abgelegt statt direkt in der Datenliste — die Liste bleibt dadurch klein und das automatische Speichern schnell, egal wie viele Checklisten unterschrieben sind.",
-          "Bestehende Unterschriften werden beim nächsten Speichern automatisch umgezogen; beim Löschen eines Eintrags oder Leeren einer Unterschrift wird die zugehörige Datei mit entfernt."
-        ]
-      }
-    ]
-  },
-  {
-    version: "1.1",
-    groups: [
-      {
-        title: "Bearbeiten-Recht",
-        items: [
-          "Neue Einträge anlegen, alle Checklisten-Felder/Unterschriften ändern, Einträge löschen und Sperren/Entsperren jetzt an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt statt an reinen Tool-Zugriff."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
@@ -59,7 +36,8 @@ const APP_CHANGELOG = [
         title: "Unterschriften",
         items: [
           "Je eine digitale Unterschrift von Trainer/Betreuer und Geschäftsstelle pro Abschnitt (Maus/Touch/Stift).",
-          "Unterschrift löschen über Löschen-Button."
+          "Unterschrift löschen über Löschen-Button.",
+          "Unterschriften werden als eigene Dateien in der Cloud abgelegt statt direkt in der Datenliste – die Liste bleibt dadurch klein und das automatische Speichern schnell, egal wie viele Checklisten unterschrieben sind."
         ]
       },
       {
@@ -67,6 +45,7 @@ const APP_CHANGELOG = [
         items: [
           "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht): einmal dort anmelden, danach werden Checklisten automatisch geladen und gespeichert – auch am Handy, ohne WebDAV-Passwort auf dem Gerät.",
           "Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen (Gruppen-Rechte werden serverseitig geprüft).",
+          "Neue Einträge anlegen, Checklisten-Felder und Unterschriften ändern, Einträge löschen sowie Sperren/Entsperren sind an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt statt an reinen Tool-Zugriff.",
           "Automatisches Speichern bei jeder Änderung; bearbeiten zwei Geräte gleichzeitig, wird der Konflikt erkannt und der aktuelle Stand neu geladen, statt dass Änderungen stillschweigend verloren gehen."
         ]
       }
