@@ -198,23 +198,59 @@ function persist() {
   }
   setSaveStatus("Speichert…");
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
-    try {
-      await uploadPendingSignatures();
-      await gatewaySave(appData);
-      const time = new Date().toLocaleTimeString("de-DE");
-      setSaveStatus(`Zuletzt automatisch gespeichert um ${time}`);
-    } catch (e) {
-      if (e instanceof ConflictError) {
-        await reloadAfterConflict();
-      } else if (e instanceof NotLoggedInError) {
-        setSaveStatus("Sitzung abgelaufen — bitte in der Tools-Übersicht neu anmelden.");
-      } else {
-        console.error("Speichern fehlgeschlagen", e);
-        setSaveStatus("Speichern fehlgeschlagen — siehe Konsole.");
-      }
+  saveTimer = setTimeout(doPersist, 300);
+}
+
+// Es darf immer nur EIN Schreibvorgang unterwegs sein. gatewayRev (das ETag, mit dem
+// der Worker Konflikte erkennt) wird erst aktualisiert, wenn ein Save zurückkommt —
+// ein zweiter Save, der währenddessen startet, schickt also dasselbe, inzwischen
+// veraltete ETag und wird zwangsläufig mit 409 abgelehnt. Für die bearbeitende
+// Person sah das aus wie "ein anderes Gerät hat geändert", obwohl sie allein war,
+// und reloadAfterConflict() verwarf dabei ihre letzte Eingabe. Beim Tippen in die
+// Stammdaten-, Bemerkungs- und Schlüsselnummer-Felder (persist() bei jedem
+// Tastendruck, 300-ms-Debounce, WebDAV-Runde deutlich länger) passierte das
+// mehrmals pro Satz.
+// Deshalb: Änderungen, die während eines laufenden Saves anfallen, nur vormerken
+// und danach in einem Rutsch nachschreiben. appData wird ohnehin immer komplett
+// geschrieben, es geht also nichts verloren, wenn mehrere Änderungen zusammenfallen.
+let saveRunner = null;
+let saveDirty = false;
+function doPersist() {
+  saveDirty = true;
+  if (!saveRunner) saveRunner = runSaveLoop().finally(() => { saveRunner = null; });
+  return saveRunner;
+}
+async function runSaveLoop() {
+  let ok = true;
+  while (saveDirty) {
+    saveDirty = false;
+    ok = await writeOnce();
+    // Bei Konflikt/Fehler wurde der Stand neu geladen bzw. die Sitzung ist
+    // abgelaufen — dann NICHT blind nachschreiben, das würde den fremden Stand
+    // wieder überbügeln.
+    if (!ok) { saveDirty = false; break; }
+  }
+  return ok;
+}
+// true = geschrieben, false = Konflikt/Fehler.
+async function writeOnce() {
+  try {
+    await uploadPendingSignatures();
+    await gatewaySave(appData);
+    const time = new Date().toLocaleTimeString("de-DE");
+    setSaveStatus(`Zuletzt automatisch gespeichert um ${time}`);
+    return true;
+  } catch (e) {
+    if (e instanceof ConflictError) {
+      await reloadAfterConflict();
+    } else if (e instanceof NotLoggedInError) {
+      setSaveStatus("Sitzung abgelaufen — bitte in der Tools-Übersicht neu anmelden.");
+    } else {
+      console.error("Speichern fehlgeschlagen", e);
+      setSaveStatus("Speichern fehlgeschlagen — siehe Konsole.");
     }
-  }, 300);
+    return false;
+  }
 }
 
 // Konflikt beim Speichern: ein anderes Gerät hat zwischenzeitlich gespeichert.
