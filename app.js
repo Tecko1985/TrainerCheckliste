@@ -282,16 +282,16 @@ function setupNav() {
   });
 
   const versionBadgeHeader = document.getElementById("version-badge");
-  versionBadgeHeader.addEventListener("click", () => switchTab("einstellungen"));
+  versionBadgeHeader.addEventListener("click", () => switchTab("info"));
   versionBadgeHeader.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab("einstellungen"); }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab("info"); }
   });
 }
 
 function switchTab(tab) {
   document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
   document.querySelectorAll(".tab-section").forEach((s) => s.classList.toggle("active", s.id === "tab-" + tab));
-  if (tab === "einstellungen") renderVersionInfo();
+  if (tab === "info") renderVersionInfo();
 }
 
 function renderAll() {

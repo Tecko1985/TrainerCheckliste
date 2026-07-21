@@ -39,6 +39,7 @@
 <div id="app-shell" style="display:none;">
   <nav>
     <button data-tab="liste" class="active">Trainer-Einträge</button>
+    <button data-tab="info">Info</button>
     <button data-tab="einstellungen" style="margin-left:auto;">Einstellungen</button>
   </nav>
 
@@ -207,6 +208,18 @@
 
     </section>
 
+    <!-- ---------- Info ---------- -->
+    <section class="tab-section" id="tab-info">
+      <div class="card">
+        <h2>Über die TrainerCheckliste <span class="version-badge" id="version-badge-2"></span></h2>
+        <p class="muted">Checkliste für das On- und Offboarding von Trainern.</p>
+      </div>
+      <div class="card">
+        <h2>Änderungen</h2>
+        <div id="changelog-list"></div>
+      </div>
+    </section>
+
     <!-- Einstellungen -->
     <section class="tab-section" id="tab-einstellungen">
       <div class="card">
@@ -217,10 +230,6 @@
           <a class="btn secondary small" href="https://tecko1985.github.io/ToolsUebersicht/">Zur Tools-Übersicht (an-/abmelden)</a>
         </div>
       </div>
-      <div class="card">
-        <h3>Versionshistorie <span class="version-badge" id="version-badge-2"></span></h3>
-        <div id="changelog-list"></div>
-      </div>
     </section>
 
   </main>
@@ -230,6 +239,6 @@
 <script src="config.js?v=1.0"></script>
 <script src="db.js?v=1.0"></script>
 <script src="signature-pad.js?v=1.0"></script>
-<script src="app.js?v=1.0"></script>
+<script src="app.js?v=1.1"></script>
 </body>
 </html>
