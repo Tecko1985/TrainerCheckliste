@@ -294,3 +294,8 @@ button.btn:disabled { opacity: 0.6; cursor: default; }
   color: var(--green);
 }
 .section-locked .signature-box canvas { cursor: default; }
+
+/* Rechte Nav-Gruppe (Einstellungen/Verwaltung + Info). Das margin haengt
+   am Wrapper, damit die Gruppe rechts bleibt, auch wenn einzelne Buttons
+   fuer Nicht-Admins ausgeblendet sind. */
+nav .nav-right { margin-left: auto; display: flex; gap: inherit; }
