@@ -1,6 +1,8 @@
 let appData = { trainerEintraege: [] };
 let currentUser = null; // {username, isAdmin, groupIds, vorname, nachname, canEdit}
 function canEdit() { return !!(currentUser && (currentUser.isAdmin || currentUser.canEdit)); }
+// Administrieren-Ebene: der Einstellungen-Tab ist Administratoren vorbehalten (2026-07-24).
+function canAdmin() { return !!(currentUser && (currentUser.isAdmin || currentUser.canAdmin)); }
 let saveTimer = null;
 let currentEintragId = null;
 let listeSearchQuery = "";
@@ -164,6 +166,9 @@ function startApp() {
   if (btnNeu) btnNeu.style.display = canEdit() ? "" : "none";
   const btnDel = document.getElementById("btn-eintrag-loeschen");
   if (btnDel) btnDel.style.display = canEdit() ? "" : "none";
+  // Einstellungen-Tab = Administrieren-Ebene (2026-07-24) — für Nicht-Admins ausblenden. Info bleibt.
+  const eTab = document.querySelector('nav button[data-tab="einstellungen"]');
+  if (eTab) eTab.style.display = canAdmin() ? "" : "none";
   renderAll();
 }
 
