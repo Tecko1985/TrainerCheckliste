@@ -157,7 +157,13 @@ function startApp() {
   status.querySelector(".label").textContent = "Verbunden: Nextcloud (über Anmeldung)";
   const settingsFileName = document.getElementById("settings-file-name");
   if (settingsFileName) settingsFileName.textContent = "Nextcloud (über Anmeldung)";
-  setSaveStatus("Autospeichern aktiv");
+  setSaveStatus(canEdit() ? "Autospeichern aktiv" : "Nur Ansicht — kein Bearbeiten-Recht für dieses Tool.");
+  // Nur-Seher: kein "Neuer Eintrag" (Sehen = wirklich nur sehen). Die Felder bestehender
+  // Einträge grauen zusätzlich über applyLockedState aus.
+  const btnNeu = document.getElementById("btn-neuer-eintrag");
+  if (btnNeu) btnNeu.style.display = canEdit() ? "" : "none";
+  const btnDel = document.getElementById("btn-eintrag-loeschen");
+  if (btnDel) btnDel.style.display = canEdit() ? "" : "none";
   renderAll();
 }
 
@@ -494,7 +500,7 @@ function renderListe() {
           <span class="badge status-${abgangStatus === "fertig" ? "fertig" : abgangStatus === "arbeit" ? "arbeit" : "offen"}">${STATUS_LABEL[abgangStatus]}</span>
           ${abgangDatum ? `<span class="eintrag-status-date">${escapeHtml(abgangDatum)}</span>` : ""}
         </span>
-        <button class="btn danger small" type="button" data-delete-id="${escapeHtml(e.id)}">Löschen</button>
+        ${canEdit() ? `<button class="btn danger small" type="button" data-delete-id="${escapeHtml(e.id)}">Löschen</button>` : ""}
       </div>
     `;
   }).join("");
@@ -782,21 +788,28 @@ function fillSection(sectionKey, section) {
 
 function applyLockedState(sectionKey, gesperrt) {
   const subtab = document.getElementById("subtab-" + sectionKey);
-  subtab.querySelectorAll("input, textarea").forEach((el) => { el.disabled = gesperrt; });
+  // Nur-Seher (kein Bearbeiten-Recht) bekommen die Sektion komplett read-only -- Felder
+  // echt ausgegraut, nicht nur der Save geblockt ("Sehen = wirklich nur sehen", 2026-07-24,
+  // Spec klare-rechte-trennung). Wiederverwendung des bestehenden Sperr-Zustands.
+  const readonly = !canEdit();
+  const disabled = gesperrt || readonly;
+  subtab.querySelectorAll("input, textarea").forEach((el) => { el.disabled = disabled; });
   // Die Kopfzeilen-Felder (Haken + Datum im Stammdaten-Block) schreiben in dieselbe
   // Sektion, liegen aber außerhalb des Subtabs — mit sperren, sonst bleibt eine
   // Hintertür in die gesperrte Checkliste offen.
   const headerChecked = document.getElementById("d-header-" + sectionKey + "-checked");
   const headerDatum = document.getElementById("d-header-" + sectionKey + "-datum");
-  if (headerChecked) headerChecked.disabled = gesperrt;
-  if (headerDatum) headerDatum.disabled = gesperrt;
-  subtab.querySelectorAll("[data-clear-sig]").forEach((btn) => { btn.disabled = gesperrt; });
+  if (headerChecked) headerChecked.disabled = disabled;
+  if (headerDatum) headerDatum.disabled = disabled;
+  subtab.querySelectorAll("[data-clear-sig]").forEach((btn) => { btn.disabled = disabled; });
   SIGNATURE_FIELDS.filter((f) => f.sectionKey === sectionKey).forEach((f) => {
-    signaturePads[f.canvasId]?.setLocked(gesperrt);
+    signaturePads[f.canvasId]?.setLocked(disabled);
   });
-  subtab.classList.toggle("section-locked", gesperrt);
+  subtab.classList.toggle("section-locked", disabled);
+  // "Abgeschlossen"-Banner nur bei echter Sperre; die Einfrieren-Reihe zusaetzlich fuer
+  // Nur-Seher ausblenden (ohne Bearbeiten-Recht gibt es nichts einzufrieren).
   document.getElementById(sectionKey + "-locked-banner").style.display = gesperrt ? "flex" : "none";
-  document.getElementById(sectionKey + "-lock-row").style.display = gesperrt ? "none" : "flex";
+  document.getElementById(sectionKey + "-lock-row").style.display = disabled ? "none" : "flex";
 }
 
 function checklistItemRowHtml(item, section, isSubItem) {

@@ -46,6 +46,7 @@ const APP_CHANGELOG = [
           "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht): einmal dort anmelden, danach werden Checklisten automatisch geladen und gespeichert – auch am Handy, ohne WebDAV-Passwort auf dem Gerät.",
           "Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen (Gruppen-Rechte werden serverseitig geprüft).",
           "Neue Einträge anlegen, Checklisten-Felder und Unterschriften ändern, Einträge löschen sowie Sperren/Entsperren sind an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt statt an reinen Tool-Zugriff.",
+          "Nur-Seher (ohne Bearbeiten-Recht) sehen die Checklisten jetzt komplett schreibgeschützt: alle Felder sind ausgegraut, die Buttons zum Anlegen und Löschen werden ausgeblendet. Vorher wirkten die Felder editierbar, obwohl das Speichern ohnehin abgelehnt wurde.",
           "Automatisches Speichern bei jeder Änderung; bearbeiten zwei Geräte gleichzeitig, wird der Konflikt erkannt und der aktuelle Stand neu geladen, statt dass Änderungen stillschweigend verloren gehen."
         ]
       }
