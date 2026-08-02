@@ -191,7 +191,10 @@ async function uploadPendingSignatures() {
         const dataUrl = section[dataKey];
         if (!dataUrl || !/^data:image\/png;base64,/.test(dataUrl)) continue;
         // Stabile FileId je Feld: Überschreiben statt Datei-Leichen bei jedem Strich.
-        const fileId = section[dataKey + "FileId"] || crypto.randomUUID();
+        // uuid() statt crypto.randomUUID(): letzteres gibt es erst ab Safari 15.4,
+        // und der Aufruf steht VOR dem try — auf einem älteren Gerät riss der
+        // TypeError den ganzen persist() mit, nicht nur diese eine Unterschrift.
+        const fileId = section[dataKey + "FileId"] || uuid();
         try {
           await gatewayFilePut(fileId, sectionKey + "-" + dataKey + ".png", dataUrl.slice(dataUrl.indexOf(",") + 1));
           section[dataKey + "FileId"] = fileId;
