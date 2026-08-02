@@ -2,65 +2,75 @@ const APP_VERSION = "1.0";
 
 const APP_CHANGELOG = [
   {
-    version: "1.1",
-    groups: [
-      {
-        title: "Bedienung am Handy",
-        items: [
-          "Die Tab-Leiste bricht am Handy jetzt um, statt seitlich aus dem Bild zu laufen. Vorher waren die hinteren Tabs auf schmalen Bildschirmen nicht erreichbar.",
-          "Eingabefelder sind am Handy mindestens 16 Pixel groß. Dadurch zoomt der iPhone-Browser beim Antippen eines Feldes nicht mehr ungefragt in die Seite hinein und bleibt danach verschoben stehen.",
-          "Die Umschaltung zwischen Zugang und Abgang bricht am Handy um, statt rechts aus dem Bild zu laufen."
-        ]
-      }
-    ]
-  },
-  {
     version: "1.0",
     groups: [
       {
         title: "Trainer-Liste",
         items: [
-          "Übersicht aller Trainer-Einträge mit Name/Vorname/Geburtsdatum und Status-Badges für Eintritt und Austritt (Offen / In Arbeit / Abgeschlossen).",
-          "Datum direkt unter dem Status-Badge sichtbar.",
-          "Suche nach Name, kombinierbar mit Statusfiltern für Eintritt und Austritt.",
-          "Sortierbare Spalten: Name, Geburtsdatum, Eintritt, Austritt (klicken = auf-/absteigend).",
-          "Neuen Eintrag anlegen, Eintrag löschen (mit Sicherheitsabfrage)."
+          "Übersicht aller Einträge mit Name, Vorname und Geburtsdatum, dazu je ein Kennzeichen für Eintritt und Austritt: offen, in Arbeit oder abgeschlossen.",
+          "Das Datum steht direkt unter dem Kennzeichen.",
+          "Suche nach Namen, kombinierbar mit den Statusfiltern für Eintritt und Austritt.",
+          "Sortierbar nach Name, Geburtsdatum, Eintritt und Austritt — ein Klick auf die Spalte kehrt die Richtung um.",
+          "Einträge anlegen und löschen, letzteres mit Rückfrage."
         ]
       },
       {
         title: "Stammdaten",
         items: [
-          "Name, Vorname, Geburtsdatum, Anschrift, Telefon, E-Mail-Adresse.",
-          "Kopf-Checkbox und Datum für Trainerzugang/-abgang."
+          "Name, Vorname, Geburtsdatum, Anschrift, Telefon und E-Mail-Adresse.",
+          "Dazu je ein Häkchen und ein Datum für Trainerzugang und Trainerabgang."
         ]
       },
       {
-        title: "Checklisten Zugang & Abgang",
+        title: "Checklisten für Zugang und Abgang",
         items: [
-          "Beide Checklisten 1:1 aus der Papier-Vorlage digitalisiert, inkl. aller Unterpunkte.",
-          "Jeder Punkt einzeln abhakbar; bei Z-Schlüssel und Schrankschlüssel erscheint jeweils ein Eingabefeld für die Schlüsselnummer.",
-          "Bemerkungsfeld, Status \"konnte nicht abgeschlossen werden, weil…\" (mit Grund) oder \"abgeschlossen\".",
-          "Ort und Datum der Abschluss-Unterschrift.",
-          "Abschnitte lassen sich per \"Speichern & Einfrieren\" sperren (alle Felder, Checkboxen, Unterschriften und die Kopfzeilen-Felder im Stammdaten-Block werden deaktiviert); der Sperrstatus wird gespeichert.",
-          "Entsperren gesperrter Checklisten und Löschen gesperrter Einträge verlangen ein Passwort, das serverseitig geprüft wird und nicht im öffentlichen Quellcode der App steht."
+          "Beide Checklisten entsprechen der Papiervorlage, einschließlich aller Unterpunkte.",
+          "Jeder Punkt ist einzeln abhakbar. Bei Z-Schlüssel und Schrankschlüssel erscheint zusätzlich ein Feld für die Schlüsselnummer.",
+          "Bemerkungsfeld sowie die Angabe „abgeschlossen“ oder „konnte nicht abgeschlossen werden, weil …“ mit Grund.",
+          "Ort und Datum der Abschluss-Unterschrift."
+        ]
+      },
+      {
+        title: "Einfrieren",
+        items: [
+          "Ein fertiger Abschnitt lässt sich mit „Speichern & Einfrieren“ sperren. Danach sind alle Felder, Häkchen, Unterschriften und die Kopfzeilenfelder der Stammdaten gesperrt.",
+          "Der Sperrzustand bleibt gespeichert und gilt auf jedem Gerät.",
+          "Eine Sperre aufheben und einen gesperrten Eintrag löschen verlangt ein Passwort. Es wird auf dem Server geprüft und steht nicht im Quelltext der App."
         ]
       },
       {
         title: "Unterschriften",
         items: [
-          "Je eine digitale Unterschrift von Trainer/Betreuer und Geschäftsstelle pro Abschnitt (Maus/Touch/Stift).",
-          "Unterschrift löschen über Löschen-Button.",
-          "Unterschriften werden als eigene Dateien in der Cloud abgelegt statt direkt in der Datenliste – die Liste bleibt dadurch klein und das automatische Speichern schnell, egal wie viele Checklisten unterschrieben sind."
+          "Je Abschnitt eine Unterschrift von Trainer oder Betreuer und eine der Geschäftsstelle — mit Maus, Finger oder Stift.",
+          "Eine Unterschrift lässt sich wieder löschen.",
+          "Die Unterschriften liegen als eigene Dateien in der Cloud statt in der Datenliste. Dadurch bleibt die Liste klein und das automatische Speichern schnell, gleich wie viele Checklisten unterschrieben sind."
+        ]
+      },
+      {
+        title: "Wer darf was",
+        items: [
+          "Sehen: alle Checklisten vollständig, aber schreibgeschützt — die Felder sind ausgegraut, die Knöpfe zum Anlegen und Löschen fehlen.",
+          "Bearbeiten: Einträge anlegen und löschen, Felder und Unterschriften pflegen, Abschnitte sperren und entsperren.",
+          "Administrieren: der Reiter „Einstellungen“.",
+          "Der Reiter „Info“ ist für alle sichtbar."
+        ]
+      },
+      {
+        title: "Bedienung am Handy",
+        items: [
+          "Die Reiterleiste bricht am Handy um, statt seitlich aus dem Bild zu laufen — auch die hinteren Reiter sind auf schmalen Bildschirmen erreichbar.",
+          "Auch die Umschaltung zwischen Zugang und Abgang bricht um, statt rechts aus dem Bild zu laufen.",
+          "Eingabefelder sind mindestens 16 Pixel groß, damit der iPhone-Browser beim Antippen nicht ungefragt in die Seite hineinzoomt und verschoben stehen bleibt.",
+          "Unterschreiben funktioniert mit dem Finger."
         ]
       },
       {
         title: "Daten & Speicherung",
         items: [
-          "Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung (Tools-Übersicht): einmal dort anmelden, danach werden Checklisten automatisch geladen und gespeichert – auch am Handy, ohne WebDAV-Passwort auf dem Gerät.",
-          "Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen (Gruppen-Rechte werden serverseitig geprüft).",
-          "Neue Einträge anlegen, Checklisten-Felder und Unterschriften ändern, Einträge löschen sowie Sperren/Entsperren sind an das Bearbeiten-Recht der Gruppen-Verwaltung gekoppelt statt an reinen Tool-Zugriff.",
-          "Nur-Seher (ohne Bearbeiten-Recht) sehen die Checklisten jetzt komplett schreibgeschützt: alle Felder sind ausgegraut, die Buttons zum Anlegen und Löschen werden ausgeblendet. Vorher wirkten die Felder editierbar, obwohl das Speichern ohnehin abgelehnt wurde.",
-          "Automatisches Speichern bei jeder Änderung; bearbeiten zwei Geräte gleichzeitig, wird der Konflikt erkannt und der aktuelle Stand neu geladen, statt dass Änderungen stillschweigend verloren gehen."
+          "Gespeichert wird in der Vereins-Nextcloud über die zentrale Anmeldung der Tools-Übersicht — ein eigenes Passwort braucht es nicht, auch nicht am Handy.",
+          "Weil hier Personendaten und Unterschriften stehen, gibt es bewusst keinen lokalen Datei-Modus: die Daten liegen ausschließlich in der Vereins-Cloud.",
+          "Gespeichert wird bei jeder Änderung von selbst.",
+          "Ändern zwei Geräte gleichzeitig denselben Stand, erkennt die App das, lädt den fremden Stand nach und sagt Bescheid."
         ]
       }
     ]
