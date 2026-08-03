@@ -3,7 +3,7 @@
 Digitalisierte Version der Checkliste „Trainerzu-/-abgang" als eigenständige,
 clientseitige Web-App ohne Build-Step (Vanilla HTML/CSS/JS).
 
-**Live:** https://tecko1985.github.io/TrainerCheckliste/
+**Live:** https://sc1911heiligenstadt.github.io/TrainerCheckliste/
 
 ---
 
@@ -38,7 +38,7 @@ clientseitige Web-App ohne Build-Step (Vanilla HTML/CSS/JS).
 
 ### Daten & Speicherung
 - Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung in der
-  [Tools-Übersicht](https://tecko1985.github.io/ToolsUebersicht/): einmal dort
+  [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/): einmal dort
   anmelden, danach werden die Checklisten automatisch geladen und gespeichert —
   auch am Handy, ohne WebDAV-Adresse, Benutzername oder App-Passwort auf dem Gerät
 - Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen

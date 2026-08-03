@@ -118,7 +118,7 @@ async function init() {
   setupDetail();
 
   // Cloud-Sync über die zentrale Anmeldung (Tools-Übersicht). Das Login-Token
-  // liegt in derselben Origin (tecko1985.github.io) und wird wiederverwendet.
+  // liegt in derselben Origin (sc1911heiligenstadt.github.io) und wird wiederverwendet.
   if (getSessionToken()) {
     try {
       const data = await gatewayLoad();
