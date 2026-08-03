@@ -329,11 +329,6 @@ function setupNav() {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 
-  const versionBadgeHeader = document.getElementById("version-badge");
-  versionBadgeHeader.addEventListener("click", () => switchTab("info"));
-  versionBadgeHeader.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); switchTab("info"); }
-  });
 }
 
 function switchTab(tab) {
