@@ -1,67 +1,23 @@
-# TrainerCheckliste (v1.0)
+# 📋 TrainerCheckliste
 
-Digitalisierte Version der Checkliste „Trainerzu-/-abgang" als eigenständige,
-clientseitige Web-App ohne Build-Step (Vanilla HTML/CSS/JS).
+Digitale Checkliste für Trainerzu- und -abgang im Nachwuchsbereich.
 
-**Live:** https://sc1911heiligenstadt.github.io/TrainerCheckliste/
+**➡️ [TrainerCheckliste öffnen](https://sc1911heiligenstadt.github.io/TrainerCheckliste/)**
 
----
+## Zugang
 
-## Funktionen
+Die Anmeldung läuft über die [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/) — dort einmal anmelden, danach ist dieses Werkzeug offen.
 
-### Trainer-Liste
-- Übersicht aller Einträge mit Name, Geburtsdatum und Status-Badges für Eintritt und
-  Austritt (Offen / In Arbeit / Abgeschlossen) inkl. Datum unter dem Badge
-- Suche nach Name, kombinierbar mit Statusfiltern für Eintritt und Austritt
-- Sortierbare Spalten: Name, Geburtsdatum, Eintritt, Austritt (Klick = auf-/absteigend)
-- Neuen Eintrag anlegen, Eintrag löschen (mit Sicherheitsabfrage)
-
-### Stammdaten
-- Name, Vorname, Geburtsdatum, Anschrift, Telefon, E-Mail
-- Kopf-Checkbox und Datum für Trainerzugang/-abgang
-
-### Checklisten Zugang & Abgang
-- Beide Checklisten 1:1 aus der Papier-Vorlage digitalisiert, inkl. aller Unterpunkte
-- Jeder Punkt einzeln abhakbar; bei Z-Schlüssel und Schrankschlüssel erscheint jeweils
-  automatisch ein Eingabefeld für die Schlüsselnummer
-- Bemerkungsfeld, Abschluss-Status („konnte nicht abgeschlossen werden, weil…" oder
-  „abgeschlossen"), Ort und Datum
-- Abschnitte lassen sich per „Speichern & Einfrieren" sperren (alle Felder, Checkboxen
-  und Unterschriften werden deaktiviert); der Sperrstatus wird gespeichert
-- Entsperren gesperrter Checklisten und Löschen gesperrter Einträge verlangen ein
-  Passwort, das serverseitig geprüft wird (kein Passwort im Quellcode)
-
-### Unterschriften
-- Je eine digitale Unterschrift von Trainer/Betreuer und Geschäftsstelle pro Abschnitt
-  (Maus, Touch oder Stift/Pen)
-- Löschen-Button pro Unterschriftsfeld
-
-### Daten & Speicherung
-- Automatische Nextcloud-Synchronisierung über die zentrale Anmeldung in der
-  [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/): einmal dort
-  anmelden, danach werden die Checklisten automatisch geladen und gespeichert —
-  auch am Handy, ohne WebDAV-Adresse, Benutzername oder App-Passwort auf dem Gerät
-- Nur wer das Tool in der Übersicht sehen darf, kann die Checklisten öffnen
-  (Gruppen-Rechte werden serverseitig geprüft)
-- Automatisches Speichern bei jeder Änderung (300 ms Debounce)
-
----
+Die Rechte gelten in drei Stufen: **Sehen** (nur ansehen), **Bearbeiten** (Einträge pflegen) und **Administrieren** (Einstellungen und Verwaltung). Wer welche Stufe hat, legt die Tools-Übersicht fest.
 
 ## Lokal starten
 
-`fetch()`-Aufrufe von einem `file://`-Origin verhalten sich inkonsistent (CORS).
-Die App daher über einen lokalen Static-Server öffnen:
+Über den Eintrag `trainercheckliste` in `E:\.claude\launch.json` — der Server läuft dann auf `http://localhost:8768/`.
 
-```
-npx serve .
-```
+## Technik
+
+Vanilla JavaScript ohne Build-Schritt — die Dateien werden so ausgeliefert, wie sie im Repo liegen. Veröffentlicht über GitHub Pages. Die Daten liegen in der Vereins-Nextcloud; der Zugriff läuft ausschließlich über den Login-Worker der Tools-Übersicht, nie mit Zugangsdaten im Browser.
 
 ---
 
-## Datenmodell
-
-Eine JSON-Datei `{ trainerEintraege: [...] }`, zentral über den Login-Gateway der
-Tools-Übersicht in der Vereins-Nextcloud gespeichert (siehe `db.js`,
-`GATEWAY_URL`/`GATEWAY_APP_ID`). Struktur und Feldnamen: `app.js`
-(`emptyTrainerEintrag`, `emptyChecklistSection`) und `checklist-schema.js`
-(`ZUGANG_SCHEMA`, `ABGANG_SCHEMA`).
+Ein Werkzeug des 1. SC 1911 Heiligenstadt. Alle Werkzeuge auf einen Blick: [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/) · Erklärungen im [Toolbox Wiki](https://sc1911heiligenstadt.github.io/Vereinswiki/).
